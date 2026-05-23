@@ -5,7 +5,6 @@ local collectionService = game:GetService("CollectionService")
 local gameCamera = workspace.CurrentCamera
 local lplr = game:GetService("Players").LocalPlayer
 
--- Removed the broken Run(function() wrapper
 local TargetPart
 local Targets
 local FOV
@@ -26,7 +25,7 @@ local DesirePACursorLimitBow
 local DesirePACursorShowGUI
 local cursorRenderConnection
 local lastGUIState = false
-local rayCheck = cloneRaycast and cloneRaycast() or RaycastParams.new()
+local rayCheck = (cloneRaycast and cloneRaycast()) or RaycastParams.new()
 local old
 local math_sqrt = math.sqrt
 local math_rad = math.rad
@@ -41,6 +40,7 @@ local ProjectileAimbot
 local paFOVCircleDrawing = nil
 local AutoCharge
 local paFOVCircleConnection = nil
+
 local function runPAFOVCircle(call)
     if paFOVCircleConnection then
         paFOVCircleConnection:Disconnect()
@@ -237,18 +237,18 @@ ProjectileAimbot = vape.Categories.Blatant:CreateModule({
     Name = 'ProjectileAimbot',
     Function = function(callback)
         if callback then
-                if PAFOVCircle then
-                    runPAFOVCircle(PAFOVCircle.Enabled)
-                end
-                if DesirePAHideCursor and DesirePAHideCursor.Enabled and not cursorRenderConnection then
-                    cursorRenderConnection = runService.RenderStepped:Connect(function()
-                        checkGUIState()
-                        updateCursor()
-                    end)
-                end
+            if PAFOVCircle then
+                runPAFOVCircle(PAFOVCircle.Enabled)
+            end
+            if DesirePAHideCursor and DesirePAHideCursor.Enabled and not cursorRenderConnection then
+                cursorRenderConnection = runService.RenderStepped:Connect(function()
+                    checkGUIState()
+                    updateCursor()
+                end)
+            end
 
-                old = bedwars.ProjectileController.calculateImportantLaunchValues
-                bedwars.ProjectileController.calculateImportantLaunchValues = function(...)
+            old = bedwars.ProjectileController.calculateImportantLaunchValues
+            bedwars.ProjectileController.calculateImportantLaunchValues = function(...)
                 local self, projmeta, worldmeta, origin, shootpos = ...
                 local originPos = entitylib.isAlive and (shootpos or (entitylib.character and entitylib.character.RootPart and entitylib.character.RootPart.Position)) or Vector3.zero
                 if not wasHovering then lockedRandomPart = nil end
@@ -388,7 +388,7 @@ ProjectileAimbot = vape.Categories.Blatant:CreateModule({
                             end
                         end
                     else
-                            customDrawDuration = 0.05
+                        customDrawDuration = 0.05
                     end
 
                     wasHovering = false
@@ -548,7 +548,7 @@ DesirePACursorViewMode = ProjectileAimbot:CreateDropdown({
             updateCursor()
         end
     end
-end)
+})
 
 DesirePACursorLimitBow = ProjectileAimbot:CreateToggle({
     Name = 'Limit to Bow',
@@ -640,4 +640,3 @@ AeroPAChargePercent = ProjectileAimbot:CreateSlider({
     Default = 100,
     Tooltip = 'Bow/frost staff charge percentage (affects damage)'
 })
--- Removed the extra lone trailing 'end)'
